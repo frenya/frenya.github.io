@@ -6,6 +6,8 @@ date: 2018-11-01
 keywords: ""
 ---
 
+# Privacy policy
+
 All the apps created by me and referenced on these pages (hereinafter "my apps") were created as pet projects of mine.
 They only collect information you specifically entered into them (user data).
 

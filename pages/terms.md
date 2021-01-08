@@ -6,6 +6,8 @@ date: 2018-11-01
 keywords: ""
 ---
 
+# Terms and conditions
+
 All the apps created by me and available under the frenya.net domain (hereinafter "my apps") were created as pet projects of mine.
 
 They are provided AS-IS, free of charge, as a public beta. No guarantees are made in terms of availability, data integrity and backups.
