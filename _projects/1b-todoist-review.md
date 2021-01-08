@@ -1,8 +1,8 @@
 ---
 name: Todoist Review
-tools: [vscode, typescript]
+tools: [meteor, react]
 image: /assets/img/todoist-review.png
-description: Online tool that let's you do a proper GTD weekly review with Todoist.
+description: Online tool that let's you do a proper GTD weekly review with Todoist. Take your productivity to the next level.
 ---
 
 # Todoist Review
@@ -12,7 +12,7 @@ GTD prescribes to do a weekly review. It is in fact a key component of the whole
 The main goal of the weekly review is to make sure every project has a "next action". In other words,
 that during the next week, you will move all the important projects forward.
 
-Todoist does not have a native way of doing these reviews, that's why I created [Todoist&nbsp;Review](https://todoist.frenya.net). 
+Todoist does not have a native way of doing these reviews, that's why I created [Todoist&nbsp;Review](https://todoist.frenya.net){:target="_blank"}. 
 
 ## How to use the review
 
