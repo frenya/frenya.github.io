@@ -7,6 +7,10 @@ comments: true
 description: Lessons learned from adding NYC to standard unit testing of vscode extensions
 ---
 
+*TL;DR: Adding NYC code coverage reporter to vscode extension unit tests can be tricky. You can check my
+working test runner [here](https://github.com/frenya/vscode-recall/blob/master/src/test/suite/index.ts){:target="_blank"}.
+The article below explains some of the key elements in it.*
+
 ## Standard testing flow
 
 When you generate an extension using Yeoman, the following scaffolding will be created:
@@ -14,9 +18,9 @@ When you generate an extension using Yeoman, the following scaffolding will be c
 1. An "Extension Tests" target will be created in launch.json
 2. This will start the Extension Host and run a `run` function, typically exported from `${workspaceFolder}/out/test/suite/index`
 3. This `run` function takes care of everything, namely
-   a. setting up a Mocha instance
-   b. adding all relevant files to its list of tests
-   c. running mocha and reporting results
+  - setting up a Mocha instance
+  - adding all relevant files to its list of tests
+  - running mocha and reporting results
 
 All the test run within the Extension Host which is creating a couple of challenges.
 
@@ -91,7 +95,7 @@ export async function run(): Promise<void> {
 ...
 ```
 
-Notice, that we are actully instrumenting the files in the `out` directory - they will be translated to .ts using source maps.
+Notice, that we are actully instrumenting the files in the `out` directory - they will be translated to your `src/**/*.ts` files using source maps.
 
 If you want to check your include/exclude configuration, you can run the following:
 
@@ -100,7 +104,7 @@ If you want to check your include/exclude configuration, you can run the followi
 console.log('Glob verification', await nyc.exclude.glob(nyc.cwd));
 ```
 
-You should see all the relevant files in the console. If not, adjust the include/exclude parameters.
+You should see all the relevant files in the console. If not, tweak the include/exclude parameters until you do.
 
 ## Instrumenting the JavaScript
 
@@ -123,6 +127,17 @@ if (Object.keys(require.cache).filter(filterFn).length > 1) {
 ```
 
 This is also the reason, why I am only (re)creating the .nyc_output folder after the call to `nyc.wrap()` (see full code below).
+
+Another thing that can help prevent the race condition is to have a look at the `activationEvents` in `package.json`.
+I changed mine from `*` to `onStartupFinished` which seems to have helped.
+
+```json
+"activationEvents": [
+  "onStartupFinished"
+]
+```
+
+[This issue](https://gitlab.com/gitlab-org/gitlab-vscode-extension/-/issues/224){:target="_blank"} on GitLab has a few pointers in that respect.
 
 ## Reporting coverage
 
