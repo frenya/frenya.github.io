@@ -113,28 +113,19 @@ NYC does this on the fly by replacing the `require` function with an instrumente
 when the `nyc.wrap()` function is called (see last line of the snippet above). Any module loaded before this
 call is not instrumented and won't appear in your coverage report.
 
-I am using the following safety check to detect race conditions that would load some of the files before the `nyc.wrap()` call
-by adding the following right after:
+I am using the following safety check to detect any modules loaded prior to the `nyc.wrap()` call
+and re-requiring them:
 
 ```javascript
-// Check the modules already loaded and warn in case of race condition
-// (ideally, at this point the require cache should only contain one file - this module)
-const myFilesRegex = /...name-of-my-extension-folder...\/out/;
-const filterFn = myFilesRegex.test.bind(myFilesRegex);
-if (Object.keys(require.cache).filter(filterFn).length > 1) {
-  console.warn('NYC initialized after modules were loaded', Object.keys(require.cache).filter(filterFn));
-}
-```
-
-This is also the reason, why I am only (re)creating the .nyc_output folder after the call to `nyc.wrap()` (see full code below).
-
-Another thing that can help prevent the race condition is to have a look at the `activationEvents` in `package.json`.
-I changed mine from `*` to `onStartupFinished` which seems to have helped.
-
-```json
-"activationEvents": [
-  "onStartupFinished"
-]
+// Print a warning for any module that should be instrumented and is already loaded,
+// delete its cache entry and re-require
+// NOTE: This would not be a good practice for production code (possible memory leaks), but can be accepted for unit tests
+// NOTE: nyc.exclude handles both the include and exlude patterns, the name is a bit misleading here
+Object.keys(require.cache).filter(f => nyc.exclude.shouldInstrument(f)).forEach(m => {
+  console.warn('Module loaded before NYC, invalidating:', m);
+  delete require.cache[m];
+  require(m);
+});
 ```
 
 [This issue](https://gitlab.com/gitlab-org/gitlab-vscode-extension/-/issues/224){:target="_blank"} on GitLab has a few pointers in that respect.
